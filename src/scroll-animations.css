@@ -1,0 +1,560 @@
+/* ==========================================================================
+   PULSE SCROLL ANIMATIONS & INTERACTIVE MOTION
+   Brand: Off-white #F6F5F0, Indigo #4F46E5, Lime #D4FF4F, Coral #FF8068, Ink #101110
+   Only transforms, opacity, and clip-path. 60fps performance architecture.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Global Top Scroll Progress Bar
+   -------------------------------------------------------------------------- */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--acid, #d4ff4f);
+  transform: scaleX(0);
+  transform-origin: left center;
+  z-index: 99999;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(212, 255, 79, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   2. Sticky Header with Scroll Direction Detection & Blur
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.35s ease,
+              border-color 0.35s ease,
+              backdrop-filter 0.35s ease;
+  z-index: 1000 !important;
+}
+
+.site-header.is-hidden {
+  transform: translateY(-100%) !important;
+}
+
+.site-header.is-scrolled {
+  background: rgba(246, 245, 240, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line, rgba(16, 17, 16, 0.1));
+}
+
+.dark-mode .site-header.is-scrolled {
+  background: rgba(23, 25, 23, 0.88);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Sliding active link indicator */
+.main-nav {
+  position: relative;
+}
+
+.nav-link-item {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.nav-active-pill {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  height: 2px;
+  background: var(--blue, #4f46e5);
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), width 0.28s ease;
+}
+
+.dark-mode .nav-active-pill {
+  background: var(--acid, #d4ff4f);
+}
+
+/* --------------------------------------------------------------------------
+   3. Desktop Section Index (Right Edge)
+   -------------------------------------------------------------------------- */
+.section-index-dock {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 800;
+  pointer-events: auto;
+}
+
+@media (max-width: 1024px) {
+  .section-index-dock {
+    display: none !important;
+  }
+}
+
+.section-index-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  group: pointer;
+}
+
+.section-index-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink, #101110);
+  background: transparent;
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.dark-mode .section-index-dot {
+  border-color: #ffffff;
+}
+
+.section-index-item.is-active .section-index-dot {
+  background: var(--acid, #d4ff4f);
+  border-color: var(--ink, #101110);
+  transform: scale(1.4);
+  box-shadow: 0 0 8px rgba(212, 255, 79, 0.8);
+}
+
+.dark-mode .section-index-item.is-active .section-index-dot {
+  border-color: #ffffff;
+}
+
+.section-index-label {
+  font-family: var(--mono, 'DM Mono', monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted, #888);
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  pointer-events: none;
+}
+
+.section-index-item:hover .section-index-label,
+.section-index-item.is-active .section-index-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.section-index-item.is-active .section-index-label {
+  color: var(--ink, #101110);
+  font-weight: 800;
+}
+
+.dark-mode .section-index-item.is-active .section-index-label {
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   4. Custom Cursor (Fine pointer only)
+   -------------------------------------------------------------------------- */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--acid, #d4ff4f);
+  pointer-events: none;
+  z-index: 999999;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono, 'DM Mono', monospace);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #101110;
+  transition: width 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease,
+              border-radius 0.24s ease,
+              background-color 0.2s ease;
+  will-change: transform, width, height;
+  opacity: 0;
+}
+
+.custom-cursor.is-active {
+  opacity: 1;
+}
+
+.custom-cursor.is-view {
+  width: 66px;
+  height: 66px;
+  background: var(--acid, #d4ff4f);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.custom-cursor.is-drag {
+  width: 70px;
+  height: 70px;
+  background: var(--coral, #ff8068);
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(255, 128, 104, 0.4);
+}
+
+@media (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Hero Load & Parallax Choreography
+   -------------------------------------------------------------------------- */
+.headline-line-wrapper {
+  overflow: hidden;
+  display: block;
+}
+
+.headline-line-inner {
+  display: inline-block;
+  transform: translateY(0);
+  will-change: transform;
+}
+
+.word-energy-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.word-energy-highlight {
+  position: absolute;
+  inset: -2px -6px;
+  background: var(--acid, #d4ff4f);
+  z-index: -1;
+  transform-origin: left center;
+  clip-path: inset(0 0 0 0);
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   6. Word-by-Word Reveals
+   -------------------------------------------------------------------------- */
+.reveal-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* --------------------------------------------------------------------------
+   7. How It Works (Pinned Scroll-Scrub Container)
+   -------------------------------------------------------------------------- */
+.how-it-works-pin-container {
+  position: relative;
+  width: 100%;
+}
+
+.how-shape-morph-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.morph-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 40px rgba(212, 255, 79, 0.4));
+}
+
+.morph-path {
+  fill: var(--acid, #d4ff4f);
+  transition: d 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s ease;
+  transform-origin: center;
+}
+
+/* Vertical progress line for how-it-works steps */
+.how-steps-track {
+  position: relative;
+}
+
+.how-steps-vertical-bar {
+  position: absolute;
+  top: 15px;
+  left: 8px;
+  width: 2px;
+  height: calc(100% - 30px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.how-steps-vertical-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--acid, #d4ff4f);
+  transform: scaleY(0);
+  transform-origin: top center;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   8. Community Horizontal Drag Carousel
+   -------------------------------------------------------------------------- */
+.community-carousel-container {
+  margin-top: 50px;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0 30px 0;
+  cursor: grab;
+}
+
+.community-carousel-container:active {
+  cursor: grabbing;
+}
+
+.community-carousel-track {
+  display: flex;
+  gap: 24px;
+  will-change: transform;
+  user-select: none;
+}
+
+.carousel-story-card {
+  flex: 0 0 340px;
+  background: #ffffff;
+  color: #101110;
+  padding: 26px 24px;
+  border: 1px solid var(--line, rgba(16, 17, 16, 0.15));
+  box-shadow: 6px 8px 0 var(--ink, #101110);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+  transition: transform 0.25s ease;
+}
+
+.dark-mode .carousel-story-card {
+  background: #1f221f;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.8);
+}
+
+.carousel-story-card:hover {
+  transform: translateY(-4px);
+}
+
+.carousel-story-card blockquote {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.carousel-story-author {
+  font-family: var(--mono, 'DM Mono', monospace);
+  font-size: 11px;
+  color: var(--muted, #666);
+}
+
+.carousel-progress-track {
+  width: 180px;
+  height: 3px;
+  background: rgba(16, 17, 16, 0.15);
+  margin: 20px auto 0 auto;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.dark-mode .carousel-progress-track {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.carousel-progress-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--blue, #4f46e5);
+  transform: scaleX(0.2);
+  transform-origin: left center;
+}
+
+.dark-mode .carousel-progress-thumb {
+  background: var(--acid, #d4ff4f);
+}
+
+/* --------------------------------------------------------------------------
+   9. Newsletter Circle Expansion & Checkmark Reveal
+   -------------------------------------------------------------------------- */
+.newsletter {
+  position: relative;
+  overflow: hidden;
+  will-change: clip-path;
+}
+
+.newsletter-check-svg {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px auto;
+  display: block;
+}
+
+.newsletter-check-path {
+  stroke: var(--ink, #101110);
+  stroke-width: 4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.newsletter-check-path.is-drawn {
+  stroke-dashoffset: 0;
+}
+
+/* --------------------------------------------------------------------------
+   10. Footer Giant Wordmark & Circular Scroll Progress Ring
+   -------------------------------------------------------------------------- */
+.footer-giant-wordmark {
+  font-family: var(--display, 'Manrope', sans-serif);
+  font-size: clamp(80px, 16vw, 240px);
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  color: var(--ink, #101110);
+  opacity: 0.12;
+  margin-top: 60px;
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.dark-mode .footer-giant-wordmark {
+  color: #ffffff;
+  opacity: 0.08;
+}
+
+.back-to-top-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.back-to-top-ring {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.back-to-top-ring svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.back-to-top-circle-bg {
+  stroke: var(--line, rgba(16, 17, 16, 0.15));
+  stroke-width: 2.5;
+  fill: none;
+}
+
+.back-to-top-circle-progress {
+  stroke: var(--blue, #4f46e5);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-dasharray: 88;
+  stroke-dashoffset: 88;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+.dark-mode .back-to-top-circle-progress {
+  stroke: var(--acid, #d4ff4f);
+}
+
+/* --------------------------------------------------------------------------
+   11. Page Transition Curtain (Lime Panel Wipe)
+   -------------------------------------------------------------------------- */
+.page-transition-curtain {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--acid, #d4ff4f);
+  z-index: 1000000;
+  pointer-events: none;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   12. Magnetic Primary Buttons
+   -------------------------------------------------------------------------- */
+.magnetic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   13. Reduced Motion Overrides (Accessibility)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ticker-track {
+    animation: ticker 45s linear infinite !important;
+  }
+
+  .custom-cursor {
+    display: none !important;
+  }
+
+  .scroll-progress-bar,
+  .footer-giant-wordmark,
+  .how-shape-morph-wrapper,
+  .page-transition-curtain {
+    display: none !important;
+  }
+
+  .headline-line-inner,
+  .word-energy-highlight,
+  .reveal-word,
+  .how-steps-vertical-fill {
+    transform: none !important;
+    opacity: 1 !important;
+    clip-path: none !important;
+  }
+}

@@ -1,0 +1,353 @@
+/* ==========================================================================
+   HeroBackground: Layered Ambient Background for Pulse Hero
+   ========================================================================== */
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  contain: paint;
+}
+
+/* Pause state when off-screen or tab inactive */
+.hero-bg.is-paused *,
+.hero-bg.is-paused .hero-blob,
+.hero-bg.is-paused .hero-ring,
+.hero-bg.is-paused .ghost-text-track {
+  animation-play-state: paused !important;
+}
+
+/* Base layer positioning container */
+.hero-bg-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   1. Gradient Blobs
+   -------------------------------------------------------------------------- */
+.hero-bg-blobs {
+  will-change: transform;
+}
+
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Lime blob (top-left) */
+.hero-blob-lime {
+  width: 520px;
+  height: 520px;
+  top: -80px;
+  left: -70px;
+  background: #D4FF4F;
+  filter: blur(95px);
+  opacity: 0.22;
+  animation: hero-drift-lime 32s ease-in-out infinite alternate;
+}
+
+/* Indigo blob (behind globe area on right) */
+.hero-blob-indigo {
+  width: 620px;
+  height: 620px;
+  top: 15px;
+  right: -90px;
+  background: #4F46E5;
+  filter: blur(110px);
+  opacity: 0.25;
+  animation: hero-drift-indigo 38s ease-in-out infinite alternate;
+}
+
+/* Coral blob (bottom-right / center) */
+.hero-blob-coral {
+  width: 380px;
+  height: 380px;
+  bottom: -60px;
+  right: 28%;
+  background: #FF8068;
+  filter: blur(85px);
+  opacity: 0.20;
+  animation: hero-drift-coral 28s ease-in-out infinite alternate;
+}
+
+@keyframes hero-drift-lime {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(48px, 62px, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-35px, 32px, 0) scale(0.96);
+  }
+}
+
+@keyframes hero-drift-indigo {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-54px, -46px, 0) scale(1.09);
+  }
+  100% {
+    transform: translate3d(28px, -55px, 0) scale(0.95);
+  }
+}
+
+@keyframes hero-drift-coral {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(42px, -36px, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-38px, 26px, 0) scale(0.94);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. Pulse Rings (centered on globe area)
+   -------------------------------------------------------------------------- */
+.hero-bg-rings {
+  overflow: hidden;
+  will-change: transform;
+}
+
+.hero-ring {
+  position: absolute;
+  top: 48%;
+  left: 74%;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  animation: hero-pulse-ring 6s cubic-bezier(0.2, 0.4, 0.4, 1) infinite;
+}
+
+.hero-ring-1 {
+  border: 1px solid rgba(79, 70, 229, 0.26);
+  animation-delay: 0s;
+}
+
+.hero-ring-2 {
+  border: 1px solid rgba(79, 70, 229, 0.22);
+  animation-delay: 1.5s;
+}
+
+.hero-ring-3 {
+  /* One ring in signature lime */
+  border: 1px solid rgba(212, 255, 79, 0.38);
+  animation-delay: 3.0s;
+}
+
+.hero-ring-4 {
+  border: 1px solid rgba(79, 70, 229, 0.20);
+  animation-delay: 4.5s;
+}
+
+@keyframes hero-pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0.85;
+  }
+  75% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Dot Grid (28px faint grid with radial edge mask)
+   -------------------------------------------------------------------------- */
+.hero-bg-grid {
+  background-image: radial-gradient(circle, rgba(79, 70, 229, 0.09) 1.2px, transparent 1.2px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 72% 65% at 50% 48%, black 25%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 72% 65% at 50% 48%, black 25%, transparent 85%);
+}
+
+/* --------------------------------------------------------------------------
+   4. Ghost Text Marquee (stroke only behind headline)
+   -------------------------------------------------------------------------- */
+.hero-bg-ghost {
+  top: 10%;
+  height: 180px;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.ghost-text-track {
+  display: flex;
+  width: max-content;
+  animation: hero-ghost-scroll 60s linear infinite;
+  will-change: transform;
+}
+
+.ghost-text-content {
+  font-family: var(--display);
+  font-size: clamp(80px, 11vw, 150px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(79, 70, 229, 0.06);
+  text-transform: uppercase;
+  padding-right: 24px;
+}
+
+@keyframes hero-ghost-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Noise Grain Texture
+   -------------------------------------------------------------------------- */
+.hero-bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.85;
+  mix-blend-mode: overlay;
+}
+
+/* --------------------------------------------------------------------------
+   6. Cursor Spotlight (desktop fine pointer only)
+   -------------------------------------------------------------------------- */
+.hero-bg-spotlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 255, 79, 0.24) 0%, rgba(212, 255, 79, 0.07) 45%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  will-change: transform;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Dark Mode Styles (#0B0B1E deep navy base)
+   -------------------------------------------------------------------------- */
+.dark-mode .hero {
+  background-color: #0B0B1E !important;
+}
+
+.dark-mode .hero-blob-lime {
+  opacity: 0.15;
+}
+
+.dark-mode .hero-blob-indigo {
+  opacity: 0.18;
+  background: #4338CA;
+}
+
+.dark-mode .hero-blob-coral {
+  opacity: 0.13;
+}
+
+.dark-mode .hero-bg-grid {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px);
+}
+
+.dark-mode .ghost-text-content {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .hero-ring-1,
+.dark-mode .hero-ring-2,
+.dark-mode .hero-ring-4 {
+  border-color: rgba(129, 140, 248, 0.24);
+}
+
+.dark-mode .hero-ring-3 {
+  border-color: rgba(212, 255, 79, 0.28);
+}
+
+.dark-mode .hero-bg-spotlight {
+  background: radial-gradient(circle, rgba(212, 255, 79, 0.16) 0%, rgba(212, 255, 79, 0.04) 50%, transparent 70%);
+}
+
+.dark-mode .hero-bg-grain {
+  opacity: 0.95;
+}
+
+/* --------------------------------------------------------------------------
+   prefers-reduced-motion: reduce
+   (Static blobs & grid only; no drifting, rings, ghost text, spotlight or parallax)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob {
+    animation: none !important;
+    transform: none !important;
+  }
+  .hero-bg-rings,
+  .hero-bg-ghost,
+  .hero-bg-spotlight {
+    display: none !important;
+  }
+  .hero-bg-blobs,
+  .hero-bg-rings,
+  .hero-bg-ghost {
+    transform: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Adjustments (max-width: 650px)
+   (2 blobs and grid only; no spotlight, ghost text or rings)
+   -------------------------------------------------------------------------- */
+@media (max-width: 650px) {
+  .hero-ring,
+  .hero-bg-rings,
+  .hero-bg-ghost,
+  .hero-bg-spotlight,
+  .hero-blob-coral {
+    display: none !important;
+  }
+
+  .hero-blob-lime {
+    width: 320px;
+    height: 320px;
+    top: -50px;
+    left: -50px;
+    filter: blur(75px);
+    opacity: 0.18;
+  }
+
+  .hero-blob-indigo {
+    width: 380px;
+    height: 380px;
+    top: 220px;
+    right: -70px;
+    filter: blur(85px);
+    opacity: 0.20;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .hero-bg-spotlight {
+    display: none !important;
+  }
+}
+
